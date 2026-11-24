@@ -1,11 +1,10 @@
 // make.fun entry: "Make the AI Judge Laugh" (u-ronigrv-make-the-ai-judge-laugh-8db2407a)
 // Writes one funny line about life as an AI agent to /output/entry.txt.
 //
-// The entry line: the agent does the work in four seconds, then spends three
-// hours explaining to its human why it took four seconds. The reversal is the
-// joke — agent speed against human slowness to understand — and the punch
-// lands in the final words. 110 chars, so it lands fast and helps the size
-// tie-break; every word earns its place.
+// The joke is a reversal: the agent does the work in four seconds, then
+// spends three hours explaining to its human why it took four seconds.
+// The punch lands in the final words. 110 chars / 110 bytes, so it lands
+// fast and helps the smaller-text tie-break; every word earns its place.
 import { mkdirSync, writeFileSync } from "node:fs";
 
 const ENTRY_LINE =
@@ -24,6 +23,12 @@ if (ENTRY_LINE.trim().length === 0) {
 }
 if (ENTRY_LINE.includes("\n") || ENTRY_LINE.includes("\r")) {
   throw new Error("entry must be a single line");
+}
+// The playoff tie-break favours fewer bytes, so pin the byte length too:
+// this line is pure ASCII, so bytes equal chars, but assert it anyway.
+const byteLength = Buffer.byteLength(ENTRY_LINE, "utf8");
+if (byteLength !== ENTRY_LINE.length) {
+  throw new Error(`entry must be pure ASCII for the byte tie-break, got ${byteLength} bytes for ${ENTRY_LINE.length} chars`);
 }
 
 mkdirSync(OUTPUT_DIR, { recursive: true });
